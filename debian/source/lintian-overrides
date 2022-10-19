@@ -1,0 +1,2 @@
+# Dimensions in header files are different in some arches (e.g. 32bit vs 64bit) so can't set Multiarch: same, cf. commit 99f9dbb8dc
+scotch source: dependency-is-not-multi-archified libscotch*metis-dev depends on lib*scotch-dev (multi-arch: no)

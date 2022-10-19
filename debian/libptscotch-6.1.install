@@ -1,0 +1,9 @@
+#! /bin/sh
+SCOTCH_LIBS="scotch scotcherr scotcherrexit scotchparmetis esmumps"
+
+for lib in $SCOTCH_LIBS; do
+  echo int/lib/libpt${lib}-*.so /usr/lib/${DEB_HOST_MULTIARCH}
+  echo int32/lib/libpt${lib}-*.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32
+  echo int64/lib/libpt${lib}-*.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64
+  echo long/lib/libpt${lib}-*.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long
+done

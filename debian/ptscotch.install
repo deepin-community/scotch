@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# separate scotch from ptscotch binaries
+PTSCOTCH_BINARIES=$( for b in int/bin/*; do if grep -q ptscotch $b; then echo `basename $b`; fi; done )
+
+for file in $PTSCOTCH_BINARIES; do
+  echo int/bin/${file} /usr/bin
+  echo int32/bin/${file}-int32 /usr/bin
+  echo int64/bin/${file}-int64 /usr/bin
+  echo long/bin/${file}-long /usr/bin
+done

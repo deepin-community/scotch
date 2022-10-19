@@ -1,0 +1,30 @@
+Index: scotch/src/libscotchmetis/library_metis.h
+===================================================================
+--- scotch.orig/src/libscotchmetis/library_metis.h	2021-06-27 23:15:31.029324446 +0200
++++ scotch/src/libscotchmetis/library_metis.h	2021-06-27 23:15:31.029324446 +0200
+@@ -176,7 +176,7 @@
+ int                         SCOTCH_METIS_V5_PartGraphRecursive (const SCOTCH_Num * const, const SCOTCH_Num * const, const SCOTCH_Num * const, const SCOTCH_Num * const, const SCOTCH_Num * const, const SCOTCH_Num * const, const SCOTCH_Num * const, const SCOTCH_Num * const, const SCOTCH_Num * const, const double * const, const SCOTCH_Num * const, SCOTCH_Num * const, SCOTCH_Num * const);
+ 
+ #ifndef SCOTCH_METIS_VERSION
+-#define SCOTCH_METIS_VERSION        3             /* MeTiS API version is 3 by default */
++#define SCOTCH_METIS_VERSION        5             /* MeTiS API version is 5 by default on Debian-based systems */
+ #endif /* SCOTCH_METIS_VERSION */
+ 
+ #if (SCOTCH_METIS_VERSION == 3)
+Index: scotch/src/libscotchmetis/Makefile
+===================================================================
+--- scotch.orig/src/libscotchmetis/Makefile	2021-06-27 23:15:30.977323340 +0200
++++ scotch/src/libscotchmetis/Makefile	2021-06-27 23:16:36.290685788 +0200
+@@ -203,8 +203,9 @@
+ 					metis_graph_part_dual_f$(OBJ)		\
+ 					metis_options$(OBJ)			\
+ 					metis_options_f$(OBJ)
+-					$(CC) -shared -Wl,-soname,libscotchmetis-$(VERSION).$(RELEASE).so $^ -L../libscotch -lscotch -lscotcherr -lm -o libscotchmetis-$(VERSION).$(RELEASE).$(PATCHLEVEL).so
+-					ln -s libscotchmetis-$(VERSION).$(RELEASE).$(PATCHLEVEL).so libscotchmetis-$(VERSION).$(RELEASE).so
+-					ln -s libscotchmetis-$(VERSION).$(RELEASE).$(PATCHLEVEL).so libscotchmetis.so
++					$(CC) -shared -Wl,-soname,libscotchmetis_m5-$(VERSION).$(RELEASE).so $^ -L../libscotch -lscotch -lscotcherr -lm -o libscotchmetis_m5-$(VERSION).$(RELEASE).$(PATCHLEVEL).so
++					ln -s libscotchmetis_m5-$(VERSION).$(RELEASE).$(PATCHLEVEL).so libscotchmetis_m5-$(VERSION).$(RELEASE).so
++					ln -s libscotchmetis_m5-$(VERSION).$(RELEASE).$(PATCHLEVEL).so libscotchmetis_m5.so
++					ln -s libscotchmetis_m5-$(VERSION).$(RELEASE).$(PATCHLEVEL).so libscotchmetis.so
+ 					$(AR) $(ARFLAGS) $(@) $(^)
+ 					-$(RANLIB) $(@)

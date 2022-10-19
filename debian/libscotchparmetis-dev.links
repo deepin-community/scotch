@@ -1,0 +1,10 @@
+#! /bin/sh
+
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32/libptscotchparmetis.so	/usr/lib/${DEB_HOST_MULTIARCH}/parmetis-int32/libparmetis.so
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32/libptscotchparmetis.a	/usr/lib/${DEB_HOST_MULTIARCH}/parmetis-int32/libparmetis.a
+
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64/libptscotchparmetis.so	/usr/lib/${DEB_HOST_MULTIARCH}/parmetis-int64/libparmetis.so
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64/libptscotchparmetis.a	/usr/lib/${DEB_HOST_MULTIARCH}/parmetis-int64/libparmetis.a
+
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long/libptscotchparmetis.so	/usr/lib/${DEB_HOST_MULTIARCH}/parmetis-long/libparmetis.so
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long/libptscotchparmetis.a	/usr/lib/${DEB_HOST_MULTIARCH}/parmetis-long/libparmetis.a

@@ -1,0 +1,26 @@
+Author: Andreas Tille <tille@debian.org>
+Date: Tue, 17 Jul 2012 10:12:24 +0200
+Description: Dix format security issue which cases an erro when using -Werror=format-security
+
+--- scotch.orig/src/libscotch/parser.c
++++ scotch/src/libscotch/parser.c
+@@ -590,15 +590,15 @@
+     case STRATTESTMUL :                           /* Multiplication operator */
+     case STRATTESTMOD :                           /* Modulus operator        */
+       i = (test->data.test[0]->typetest < test->typetest) ? 1 : 0;
+-      fprintf (stream, strattestsavepa[i][0]);
++      fputs (strattestsavepa[i][0], stream);
+       o = stratTestSave (test->data.test[0], stream);
+-      fprintf (stream, strattestsavepa[i][1]);
++      fputs (strattestsavepa[i][1], stream);
+       if (o == 0) {
+         fprintf (stream, "%c", strattestsaveop[test->typetest]);
+         i = (test->data.test[1]->typetest < test->typetest) ? 1 : 0;
+-        fprintf (stream, strattestsavepa[i][0]);
++        fputs (strattestsavepa[i][0], stream);
+         stratTestSave (test->data.test[1], stream);
+-        fprintf (stream, strattestsavepa[i][1]);
++        fputs (strattestsavepa[i][1], stream);
+       }
+       break;
+     case STRATTESTVAL :                           /* Constant value */

@@ -1,0 +1,24 @@
+#! /bin/sh
+
+echo int/include/metis.h /usr/include/metis
+echo int/include/metisf.h /usr/include/metis
+echo int/lib/libmetis.so /usr/lib/${DEB_HOST_MULTIARCH}
+echo int/lib/libmetis.a /usr/lib/${DEB_HOST_MULTIARCH}
+
+echo int32/include/metis.h /usr/include/metis-int32
+echo int32/include/metisf.h /usr/include/metis-int32
+#echo int32/lib/libmetis.so /usr/lib/${DEB_HOST_MULTIARCH}/metis-int32
+#echo int32/lib/libmetis.a /usr/lib/${DEB_HOST_MULTIARCH}/metis-int32
+
+echo int64/include/metis.h /usr/include/metis-int64
+echo int64/include/metisf.h /usr/include/metis-int64
+#echo int64/lib/libmetis.so /usr/lib/${DEB_HOST_MULTIARCH}/metis-int64
+#echo int64/lib/libmetis.a /usr/lib/${DEB_HOST_MULTIARCH}/metis-int64
+
+echo long/include/metis.h /usr/include/metis-long
+echo long/include/metisf.h /usr/include/metis-long
+#echo long/lib/libmetis.so /usr/lib/${DEB_HOST_MULTIARCH}/metis-long
+#echo long/lib/libmetis.a /usr/lib/${DEB_HOST_MULTIARCH}/metis-long
+
+echo doc/CeCILL-C_V1-en.txt /usr/share/doc/libscotchmetis-dev
+echo doc/CeCILL-C_V1-fr.txt /usr/share/doc/libscotchmetis-dev

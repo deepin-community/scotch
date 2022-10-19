@@ -1,0 +1,15 @@
+#!/bin/bash
+echo debian/man/ptscotch_esmumps.1
+
+for dg in man/man1/dg*.1; do
+  echo $dg
+done
+
+# separate scotch from ptscotch binaries
+PTSCOTCH_BINARIES=$( for b in int/bin/*; do if grep -q ptscotch $b; then echo `basename $b`; fi; done )
+
+for file in $PTSCOTCH_BINARIES; do
+  if [ -e man/man1/${file}.1 ]; then
+    echo man/man1/${file}.1
+  fi
+done

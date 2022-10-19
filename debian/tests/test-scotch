@@ -1,0 +1,21 @@
+export OMPI_MCA_plm_rsh_agent=/bin/false
+export OMPI_MCA_rmaps_base_oversubscribe=1
+export OMPI_MCA_btl_base_warn_component_unused=0
+
+cp debian/Makefile_int.inc src/Makefile.inc
+# patch src/check/Makefile to use installed scotch
+patch -p0 < debian/tests/check.Makefile.patch
+cd src/check
+
+echo "Test libscotch.so (sequential)"
+make realclean
+make check
+
+echo "Test libptscotch.so (parallel)"
+make realclean
+make ptcheck 2>ptcheck.stderr
+# expect multiple "Proc  1 of  3, pid ....." piped to stderr
+if [ -s ptcheck.stderr ]; then
+    echo "stderr reported:"
+    cat ptcheck.stderr
+fi

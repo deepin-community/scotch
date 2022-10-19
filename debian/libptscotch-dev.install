@@ -1,0 +1,30 @@
+#! /bin/sh
+
+echo int/include/ptscotch.h /usr/include/scotch
+echo int/include/ptscotchf.h /usr/include/scotch
+
+echo int32/include/ptscotch.h /usr/include/scotch-int32
+echo int32/include/ptscotchf.h /usr/include/scotch-int32
+
+echo int64/include/ptscotch.h /usr/include/scotch-int64
+echo int64/include/ptscotchf.h /usr/include/scotch-int64
+
+echo long/include/ptscotch.h /usr/include/scotch-long
+echo long/include/ptscotchf.h /usr/include/scotch-long
+
+SCOTCH_STATIC_LIBS="scotch esmumps"
+SCOTCH_LIBS="${SCOTCH_STATIC_LIBS=} scotcherr scotcherrexit scotchparmetis"
+
+for lib in $SCOTCH_LIBS; do
+  echo int/lib/libpt${lib}.so /usr/lib/${DEB_HOST_MULTIARCH}
+  echo int32/lib/libpt${lib}.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32
+  echo int64/lib/libpt${lib}.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64
+  echo long/lib/libpt${lib}.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long
+done
+
+for lib in $SCOTCH_STATIC_LIBS; do
+  echo int/lib/libpt${lib}*.a /usr/lib/${DEB_HOST_MULTIARCH}
+  echo int32/lib/libpt${lib}*.a /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32
+  echo int64/lib/libpt${lib}*.a /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64
+  echo long/lib/libpt${lib}*.a /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long
+done

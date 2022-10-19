@@ -1,0 +1,170 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode. 
+#export DH_VERBOSE=1
+
+
+DEB_BUILD_ARCH_OS ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH_OS)
+DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+
+# Disabled because this FTBFS with multiple jobs (bug 620973)
+#ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+#         NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+#         MAKEFLAGS += -j$(NUMJOBS)
+#endif
+
+# Add here any variable or target overrides you need.
+# where sources are
+DEB_SRCDIR = $(CURDIR)/src
+
+# no check for this software
+#DEB_MAKE_CHECK_TARGET :=
+
+# note that debian patch default_metis_v5.patch
+# has set metis version compatibility to 5
+# (SCOTCH_METIS_VERSION=5) in metis.h (library_metis.h),
+# equivalent to configuring the build with -DSCOTCH_METIS_VERSION=5
+
+CCP=mpicc
+export CFLAGS_COMMON = -O3 -fPIC -I. \
+			-Drestrict=__restrict \
+			-DCOMMON_FILE_COMPRESS_GZ \
+			-DCOMMON_FILE_COMPRESS_BZ2 \
+			-DCOMMON_FILE_COMPRESS_LZMA \
+			-DCOMMON_PTHREAD \
+			-DSCOTCH_PTHREAD_NUMBER=2 \
+			-DCOMMON_RANDOM_FIXED_SEED \
+			-DSCOTCH_RENAME -DSCOTCH_RENAME_PARSER \
+			$(shell dpkg-buildflags --get CFLAGS)
+export LDFLAGS_COMMON = -pthread -lz -lbz2 -llzma -lm -lrt $(shell dpkg-buildflags --get LDFLAGS)
+
+# hurd does not have POSIX time and therefore needs sys/time.h to define struct timeval
+# hurd does not support pthread_setaffinity_np (-DSCOTCH_PTHREAD_AFFINITY_LINUX)
+ifeq ($(DEB_BUILD_ARCH_OS),hurd)
+  CFLAGS_COMMON += -DHAVE_SYS_TIME_H
+else
+  CFLAGS_COMMON += -DCOMMON_PTHREAD_AFFINITY_LINUX
+endif
+
+# By default, halt on test (check) failures. But,
+# - hurd times out on buildd during build-time checks
+# - m68k segfaults inside the qemu emulator used for builds
+# - powerpcspe segfaults on test_scotch_graph_order in INTSIZE64
+# so don't halt on test failures on these arches.
+# In fact don't run tests at all on hurd.
+ifeq ($(DEB_HOST_ARCH_OS),hurd)
+  HALT_ON_TEST_ERROR = no
+  SKIP_TESTS = yes
+else ifeq ($(DEB_HOST_ARCH),m68k)
+  HALT_ON_TEST_ERROR = no
+else ifeq ($(DEB_HOST_ARCH),powerpcspe)
+  HALT_ON_TEST_ERROR = no
+else
+  HALT_ON_TEST_ERROR = yes
+endif
+ifeq (nocheck,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+  SKIP_TESTS = yes
+endif
+
+
+DEB_DBG_PACKAGE_scotch = scotch-dbg
+DEB_DBG_PACKAGE_ptscotch = ptscotch-dbg
+DEB_DBG_PACKAGE_libscotch-6.1 = libscotch-dbg
+DEB_DBG_PACKAGE_libptscotch-6.1 = libptscotch-dbg
+
+DEB_STRIPPED_UPSTREAM_VERSION = $(shell echo $(DEB_UPSTREAM_VERSION) | sed -n -e 's/\.dfsg.*$$//p')
+SCOTCH_VERSION=$(DEB_STRIPPED_UPSTREAM_VERSION)
+
+INTSIZE_VERS := $(shell echo "int int32 int64 long")
+
+export OMPI_MCA_plm_rsh_agent=/bin/false                #workaround to start MPI-applications in chroot
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	for v in $(INTSIZE_VERS); do \
+	   mkdir -p $(CURDIR)/$$v; \
+	   mkdir -p $(CURDIR)/$$v/bin; \
+	   mkdir -p $(CURDIR)/$$v/lib; \
+	   mkdir -p $(CURDIR)/$$v/include; \
+	   mkdir -p $(CURDIR)/$$v/share/man/man1; \
+	done
+	set -e; \
+	for v in $(INTSIZE_VERS); do \
+	   echo "compiling for $$v"; \
+	   cp debian/Makefile_$$v.inc src/Makefile.inc; \
+	   (cd src && $(MAKE) realclean prefix=$(CURDIR)/$$v); \
+	   (cd src && $(MAKE) scotch ptscotch prefix=$(CURDIR)/$$v); \
+	   (cd src && $(MAKE) esmumps ptesmumps prefix=$(CURDIR)/$$v); \
+	   echo "check for $$v"; \
+	   if [ "x$(SKIP_TESTS)" != "xyes" ]; then \
+	     if [ "x$(HALT_ON_TEST_ERROR)" = "xno" ]; then \
+	       (cd src && LD_LIBRARY_PATH=$(CURDIR)/src/check/../../lib:$(LD_LIBRARY_PATH) $(MAKE) check prefix=$(CURDIR)/$$v) || /bin/true; \
+	     else \
+	       (cd src && LD_LIBRARY_PATH=$(CURDIR)/src/check/../../lib:$(LD_LIBRARY_PATH) $(MAKE) check prefix=$(CURDIR)/$$v); \
+	     fi; \
+	   fi; \
+	   echo "install for $$v"; \
+	   (cd src && $(MAKE) install prefix=$(CURDIR)/$$v); \
+	   mv $$v/bin/gbase $$v/bin/scotch_gbase; \
+	   mv $$v/bin/gmap $$v/bin/scotch_gmap; \
+	   mv $$v/bin/gpart $$v/bin/scotch_gpart; \
+	   rm -rf lib; \
+	   rm -f src/Makefile.inc; \
+	done
+
+override_dh_auto_install:
+#	find . -name libscotch.so | xargs ls -l; \
+#	Install [par]metis-compatibility symlinks
+	for v in $(INTSIZE_VERS); do \
+	   (cd $$v/lib && ln -s libscotchmetis.a libmetis.a); \
+	   (cd $$v/lib && ln -s libscotchmetis.so libmetis.so); \
+	   (cd $$v/lib && ln -s libptscotchparmetis.a libparmetis.a); \
+	   (cd $$v/lib && ln -s libptscotchparmetis.so libparmetis.so); \
+	done
+
+#	add suffix to {int32,int64,long}/bin/*
+	for file in $(shell ls int32/bin); do \
+	   (cd int32/bin && mv $$file $$file-int32); \
+	done
+	for file in $(shell ls int64/bin); do \
+	   (cd int64/bin && mv $$file $$file-int64); \
+	done
+	for file in $(shell ls long/bin); do \
+	   (cd long/bin && mv $$file $$file-long); \
+	done
+#       Add "#include <cstdio>" to main [pt]scotch.h
+	find . -name \*scotch.h | xargs perl -pi -e "s|\/\*\+ Version flags|\#ifdef \_\_cplusplus\n\#include \<cstdio\>\n\#else\n\#include \<stdio.h\>\n\#endif\n\n\/\*\+ Version flags|"
+
+
+override_dh_installman:
+	dh_installman
+	mv debian/scotch/usr/share/man/man1/gmap.1 debian/scotch/usr/share/man/man1/scotch_gmap.1
+	mv debian/scotch/usr/share/man/man1/gbase.1 debian/scotch/usr/share/man/man1/scotch_gbase.1
+	(cd debian/scotch/usr/share/man/man1 && ln -sf scotch_gmap.1.gz scotch_gpart.1.gz)
+	for file in $(shell ls int/bin); do \
+	  if [ -x debian/scotch/usr/bin/$$file ]; then \
+	    (cd debian/scotch/usr/share/man/man1 && ln -sf $$file.1.gz $$file-int32.1.gz); \
+	    (cd debian/scotch/usr/share/man/man1 && ln -sf $$file.1.gz $$file-int64.1.gz); \
+	    (cd debian/scotch/usr/share/man/man1 && ln -sf $$file.1.gz $$file-long.1.gz); \
+	  fi; \
+	  if [ -x debian/ptscotch/usr/bin/$$file ]; then \
+	    (cd debian/ptscotch/usr/share/man/man1 && ln -sf $$file.1.gz $$file-int32.1.gz); \
+	    (cd debian/ptscotch/usr/share/man/man1 && ln -sf $$file.1.gz $$file-int64.1.gz); \
+	    (cd debian/ptscotch/usr/share/man/man1 && ln -sf $$file.1.gz $$file-long.1.gz); \
+	  fi; \
+	done
+
+
+override_dh_clean:
+	dh_clean
+	for v in $(INTSIZE_VERS); do \
+	   (if [ -d $$v ]; then rm -rf $$v; fi); \
+	done
+	cp debian/Makefile.inc src/
+	make -C src/check realclean
+	make -C src realclean
+	rm -f src/Makefile.inc

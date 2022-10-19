@@ -1,0 +1,13 @@
+Document: ptscotch-doc
+Title: PT-Scotch Documentation
+Author: François Pellegrini
+Abstract: This document describes the capabilities and operations of
+ PT-Scotch and libScotch, a software package and a software library
+ which compute parallel static mappings and parallel sparse matrix
+ block orderings of distributed graphs. It gives brief descriptions of
+ the algorithms, details the input/output formats, instructions for
+ use, installation procedures, and provides a number of examples.
+Section: Programming
+
+Format: PDF
+Files: /usr/share/doc/libptscotch-dev/ptscotch_user*.pdf*

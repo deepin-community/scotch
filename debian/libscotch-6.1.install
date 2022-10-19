@@ -1,0 +1,10 @@
+#! /bin/sh
+
+SCOTCH_LIBS="scotch scotcherr scotcherrexit scotchmetis_m5 esmumps"
+
+for lib in $SCOTCH_LIBS; do
+  echo int/lib/lib${lib}-*.so /usr/lib/${DEB_HOST_MULTIARCH}
+  echo int32/lib/lib${lib}-*.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32
+  echo int64/lib/lib${lib}-*.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64
+  echo long/lib/lib${lib}-*.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long
+done

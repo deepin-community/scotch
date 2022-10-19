@@ -1,0 +1,14 @@
+Document: scotch-doc
+Title: Scotch Documentation
+Author: François Pellegrini
+Abstract: This document describes the capabilities and operations of
+ Scotch and libScotch, a software package and a software library
+ devoted to static mapping, edge- and vertex-based graph partitioning,
+ and sparse matrix block ordering of graphs and meshes/hypergraphs. It
+ gives brief descriptions of the algorithms, details the input/output
+ formats, instructions for use, installation procedures, and provides a
+ number of examples.
+Section: Programming
+
+Format: PDF
+Files: /usr/share/doc/libscotch-dev/scotch_user*.pdf*

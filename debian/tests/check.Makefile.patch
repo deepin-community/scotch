@@ -1,0 +1,125 @@
+--- src/check/Makefile.orig	2021-06-25 15:30:01.592380023 +0200
++++ src/check/Makefile	2021-06-28 00:36:10.214410347 +0200
+@@ -32,9 +32,9 @@
+ 
+ TMPDIR			= /tmp
+ 
+-SCOTCHBINDIR		= ../../bin
+-SCOTCHINCDIR		= ../../include
+-SCOTCHLIBDIR		= ../../lib
++SCOTCHBINDIR		= /usr/bin
++SCOTCHINCDIR		= /usr/include/scotch
++SCOTCHLIBDIR		= /usr/lib/$(shell dpkg-architecture -q DEB_HOST_MULTIARCH)
+ SCOTCHTGTDIR		= ../../tgt
+ 
+ LIBESMUMPS		= -lesmumps -lscotch -lscotcherr
+@@ -45,6 +45,8 @@
+ DEPPTSCOTCH		= $(SCOTCHLIBDIR)/libptscotch$(LIB)
+ DEPSCOTCH		= $(SCOTCHLIBDIR)/libscotch$(LIB)
+ 
++METISINCDIR            = /usr/include/metis
++
+ EXECPPROG		?= mpirun
+ EXECPFLAGS		?= $(if $(findstring Open,$(shell $(EXECPPROG) --version)),--oversubscribe)
+ # EXECPFLAGS		+= valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes
+@@ -65,10 +67,10 @@
+ 				$(CC) $(CFLAGS) $(CLIBFLAGS) -I$(SCOTCHINCDIR) -c $(<) -o $(@)
+ 
+ %$(EXE)	:	%.c
+-				$(CC) $(CFLAGS) -I$(SCOTCHINCDIR) -L$(SCOTCHLIBDIR) $(<) -o $(@) $(SCOTCHLIBS) $(LDFLAGS)
++				$(CC) $(CFLAGS) -I$(METISINCDIR) -I$(SCOTCHINCDIR) -L$(SCOTCHLIBDIR) $(<) -o $(@) $(SCOTCHLIBS) $(LDFLAGS) -lm
+ 
+ %$(EXE)	:	%.f90
+-				$(FC) $(FFLAGS) -I$(SCOTCHINCDIR) -L$(SCOTCHLIBDIR) $(<) -o $(@) $(SCOTCHLIBS) $(LDFLAGS)
++				$(FC) $(FFLAGS) -I$(METISINCDIR) -I$(SCOTCHINCDIR) -L$(SCOTCHLIBDIR) $(<) -o $(@) $(SCOTCHLIBS) $(LDFLAGS)
+ 
+ ##
+ ##  Project rules.
+@@ -130,10 +132,11 @@
+ ##  Test cases dependencies.
+ ##
+ 
++# skip these checks:
++#			check_common_random			
++#			check_fibo				
+ CHECKSCOTCH = 		check_common_file_compress		\
+-			check_common_random			\
+ 			check_common_thread			\
+-			check_fibo				\
+ 			check_strat_seq				\
+ 			check_scotch_arch			\
+ 			check_scotch_arch_deco			\
+@@ -481,11 +484,11 @@
+ 					$(EXECS) $(SCOTCHBINDIR)/atst $(SCOTCHTGTDIR)/t4x4x4.tgt
+ 
+ check_prog_gbase		:
+-					$(EXECS) $(SCOTCHBINDIR)/gbase 1 data/m4x4.grf $(TMPDIR)/m4x4_b1.grf
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gbase 1 data/m4x4.grf $(TMPDIR)/m4x4_b1.grf
+ 					$(PROGDIFF) "data/m4x4_b1.grf" "$(TMPDIR)/m4x4_b1.grf"
+-					$(EXECS) $(SCOTCHBINDIR)/gbase 1 data/m4x4_b1.grf $(TMPDIR)/m4x4_b1.grf
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gbase 1 data/m4x4_b1.grf $(TMPDIR)/m4x4_b1.grf
+ 					$(PROGDIFF) "data/m4x4_b1.grf" "$(TMPDIR)/m4x4_b1.grf"
+-					$(EXECS) $(SCOTCHBINDIR)/gbase 0 data/m4x4_b1.grf $(TMPDIR)/m4x4.grf
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gbase 0 data/m4x4_b1.grf $(TMPDIR)/m4x4.grf
+ 					$(PROGDIFF) "data/m4x4.grf" "$(TMPDIR)/m4x4.grf"
+ 
+ check_prog_gmk			:
+@@ -540,8 +543,8 @@
+ 					$(EXECS) $(SCOTCHBINDIR)/mord data/ship001.msh | $(SCOTCHBINDIR)/gotst $(TMPDIR)/ship001.grf
+ 
+ check_prog_gmap			:
+-					$(EXECS) $(SCOTCHBINDIR)/gmap data/bump.grf $(SCOTCHTGTDIR)/h3.tgt $(TMPDIR)/bump_h3.map -vmt
+-					$(EXECS) $(SCOTCHBINDIR)/gmap data/small.grf $(SCOTCHTGTDIR)/m11x13.tgt $(TMPDIR)/small_m11x13.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gmap data/bump.grf $(SCOTCHTGTDIR)/h3.tgt $(TMPDIR)/bump_h3.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gmap data/small.grf $(SCOTCHTGTDIR)/m11x13.tgt $(TMPDIR)/small_m11x13.map -vmt
+ 
+ check_prog_gord			:	check_prog_gmk_msh
+ 					$(EXECS) $(SCOTCHBINDIR)/gord data/bump.grf $(TMPDIR)/bump.ord -vt
+@@ -568,26 +571,26 @@
+ 					$(EXECS) $(SCOTCHBINDIR)/gout '-Oi{c,r}' data/bump.grf data/bump.xyz $(TMPDIR)/bump_k9.map $(TMPDIR)/bump_k9.iv
+ 
+ check_prog_gpart		:
+-					$(EXECS) $(SCOTCHBINDIR)/gpart 9 data/bump.grf $(TMPDIR)/bump_k9.map -vmt
+-					$(EXECS) $(SCOTCHBINDIR)/gpart 9 data/bump_b100000.grf $(TMPDIR)/bump_k9.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart 9 data/bump.grf $(TMPDIR)/bump_k9.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart 9 data/bump_b100000.grf $(TMPDIR)/bump_k9.map -vmt
+ 
+ check_prog_gpart_clustering	:
+-					$(EXECS) $(SCOTCHBINDIR)/gpart -q 1 data/bump.grf $(TMPDIR)/bump_part_cls_9.map -vmt
+-					$(EXECS) $(SCOTCHBINDIR)/gpart -q 1 data/bump_b100000.grf $(TMPDIR)/bump_b100000_part_cls_9.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart -q 1 data/bump.grf $(TMPDIR)/bump_part_cls_9.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart -q 1 data/bump_b100000.grf $(TMPDIR)/bump_b100000_part_cls_9.map -vmt
+ 					$(EXECS) $(SCOTCHBINDIR)/gmtst data/bump_b100000.grf $(SCOTCHTGTDIR)/vcmplt.tgt $(TMPDIR)/bump_b100000_part_cls_9.map
+-					$(EXECS) $(SCOTCHBINDIR)/gpart -q 1 data/bump_imbal_32.grf $(TMPDIR)/bump_imbal_32_part_cls_32.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart -q 1 data/bump_imbal_32.grf $(TMPDIR)/bump_imbal_32_part_cls_32.map -vmt
+ 					$(EXECS) $(SCOTCHBINDIR)/gmtst data/bump_imbal_32.grf $(SCOTCHTGTDIR)/vhcub.tgt $(TMPDIR)/bump_imbal_32_part_cls_32.map
+ 
+ check_prog_gpart_overlap	:
+-					$(EXECS) $(SCOTCHBINDIR)/gpart -o 9 data/bump.grf $(TMPDIR)/bump_part_ovl_9.map -vmt
+-					$(EXECS) $(SCOTCHBINDIR)/gpart -o 9 data/bump_b100000.grf $(TMPDIR)/bump_b100000_part_ovl_9.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart -o 9 data/bump.grf $(TMPDIR)/bump_part_ovl_9.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart -o 9 data/bump_b100000.grf $(TMPDIR)/bump_b100000_part_ovl_9.map -vmt
+ 					$(EXECS) $(SCOTCHBINDIR)/gmtst -o data/bump_b100000.grf $(SCOTCHTGTDIR)/k9.tgt $(TMPDIR)/bump_b100000_part_ovl_9.map
+-					$(EXECS) $(SCOTCHBINDIR)/gpart -o 32 data/bump_imbal_32.grf $(TMPDIR)/bump_imbal_32_part_ovl_32.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart -o 32 data/bump_imbal_32.grf $(TMPDIR)/bump_imbal_32_part_ovl_32.map -vmt
+ 					$(EXECS) $(SCOTCHBINDIR)/gmtst data/bump_imbal_32.grf $(SCOTCHTGTDIR)/k32.tgt $(TMPDIR)/bump_imbal_32_part_ovl_32.map
+-					$(EXECS) $(SCOTCHBINDIR)/gpart -o 6 data/bump_imbal_32.grf $(TMPDIR)/bump_imbal_32_part_ovl_32_6.map '-me{strat=m{asc=b{width=3,bnd=d{pass=40,dif=1,rem=0}f{move=80,pass=-1,bal=0.01},org=f{move=80,pass=-1,bal=0.01}},low=r{job=t,bal=0.01,map=t,poli=S,sep=(m{asc=b{bnd=f{move=120,pass=-1,bal=0.01,type=b},org=f{move=120,pass=-1,bal=0.01,type=b},width=3},low=h{pass=10}f{move=120,pass=-1,bal=0.01,type=b},vert=120,rat=0.8}|m{asc=b{bnd=f{move=120,pass=-1,bal=0.01,type=b},org=f{move=120,pass=-1,bal=0.01,type=b},width=3},low=h{pass=10}f{move=120,pass=-1,bal=0.01,type=b},vert=120,rat=0.8})},vert=10000,rat=0.8,type=h}}f' -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart -o 6 data/bump_imbal_32.grf $(TMPDIR)/bump_imbal_32_part_ovl_32_6.map '-me{strat=m{asc=b{width=3,bnd=d{pass=40,dif=1,rem=0}f{move=80,pass=-1,bal=0.01},org=f{move=80,pass=-1,bal=0.01}},low=r{job=t,bal=0.01,map=t,poli=S,sep=(m{asc=b{bnd=f{move=120,pass=-1,bal=0.01,type=b},org=f{move=120,pass=-1,bal=0.01,type=b},width=3},low=h{pass=10}f{move=120,pass=-1,bal=0.01,type=b},vert=120,rat=0.8}|m{asc=b{bnd=f{move=120,pass=-1,bal=0.01,type=b},org=f{move=120,pass=-1,bal=0.01,type=b},width=3},low=h{pass=10}f{move=120,pass=-1,bal=0.01,type=b},vert=120,rat=0.8})},vert=10000,rat=0.8,type=h}}f' -vmt
+ 
+ check_prog_gpart_remap		:
+-					$(EXECS) $(SCOTCHBINDIR)/gpart 32 data/bump_imbal_32.grf /dev/null -rodata/bump_old.map -vmt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart 32 data/bump_imbal_32.grf /dev/null -rodata/bump_old.map -vmt
+ 
+ check_prog_gscat		:
+ 					$(EXECS) $(SCOTCHBINDIR)/gscat 4 data/small.grf $(TMPDIR)/small_%r.grf
+@@ -601,8 +604,8 @@
+ 
+ check_prog_full		:
+ 					$(EXECS) $(SCOTCHBINDIR)/gord data/bump.grf $(TMPDIR)/bump_f.ord -vt
+-					$(EXECS) $(SCOTCHBINDIR)/gpart 3 data/bump.grf $(TMPDIR)/bump_f.map -vt
+-					$(EXECS) $(SCOTCHBINDIR)/gpart -o 3 data/bump.grf $(TMPDIR)/bump_fo.map -vt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart 3 data/bump.grf $(TMPDIR)/bump_f.map -vt
++					$(EXECS) $(SCOTCHBINDIR)/scotch_gpart -o 3 data/bump.grf $(TMPDIR)/bump_fo.map -vt
+ 
+ ##
+ ##  Parallel program tests.

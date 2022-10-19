@@ -1,0 +1,22 @@
+EXE	=
+LIB	= .a
+OBJ	= .o
+
+MAKE	= make
+AR	= ar
+ARFLAGS	= -ruv
+CAT	= cat
+CCS	= mpicc
+CCP	= mpicc
+CCD	= mpicc
+CPPFLAGS= $(shell dpkg-buildflags --get CPPFLAGS)
+CXXFLAGS= $(shell dpkg-buildflags --get CXXFLAGS)
+CFLAGS 	= $(shell dpkg-buildflags --get CFLAGS) $(CFLAGS_COMMON) -DINTSIZE32
+LDFLAGS	= $(shell dpkg-buildflags --get LDFLAGS) $(LDFLAGS_COMMON)
+CP	= cp
+LEX	= flex -Pscotchyy -olex.yy.c
+LN	= ln
+MKDIR	= mkdir
+MV	= mv
+RANLIB	= ranlib
+YACC	= bison -pscotchyy -y -b y

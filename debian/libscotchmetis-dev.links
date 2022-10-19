@@ -1,0 +1,10 @@
+#! /bin/sh
+
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32/libscotchmetis.so	/usr/lib/${DEB_HOST_MULTIARCH}/metis-int32/libmetis.so
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32/libscotchmetis.a	/usr/lib/${DEB_HOST_MULTIARCH}/metis-int32/libmetis.a
+
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64/libscotchmetis.so	/usr/lib/${DEB_HOST_MULTIARCH}/metis-int64/libmetis.so
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64/libscotchmetis.a	/usr/lib/${DEB_HOST_MULTIARCH}/metis-int64/libmetis.a
+
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long/libscotchmetis.so	/usr/lib/${DEB_HOST_MULTIARCH}/metis-long/libmetis.so
+echo /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long/libscotchmetis.a	/usr/lib/${DEB_HOST_MULTIARCH}/metis-long/libmetis.a

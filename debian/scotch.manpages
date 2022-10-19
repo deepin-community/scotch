@@ -1,0 +1,24 @@
+#!/bin/bash
+echo debian/man/amk_fft2.1
+echo debian/man/amk_hy.1
+echo debian/man/amk_m2.1
+echo debian/man/amk_p2.1
+echo debian/man/gscat.1
+echo debian/man/gmk_m2.1
+echo debian/man/gmk_m3.1
+echo debian/man/gmk_ub2.1
+echo debian/man/scotch_esmumps.1
+echo debian/man/scotch_binaries.1
+
+# separate scotch from ptscotch binaries
+SCOTCH_BINARIES=$( for b in int/bin/*; do if ! grep -q ptscotch $b; then echo `basename $b`; fi; done )
+
+for file in $SCOTCH_BINARIES; do
+  if [ -e man/man1/${file}.1 ]; then
+    echo man/man1/${file}.1
+  fi
+done
+
+# gmap.1, gbase.1 will need to be renamed as scotch_gmap.1 in override_dh_installman
+echo man/man1/gmap.1
+echo man/man1/gbase.1

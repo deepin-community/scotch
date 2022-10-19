@@ -1,0 +1,34 @@
+#! /bin/sh
+
+SCOTCH_STATIC_LIBS="scotch scotcherr scotcherrexit scotchmetis esmumps"
+SCOTCH_LIBS="scotchmetis_m5 ${SCOTCH_STATIC_LIBS}"
+
+for lib in $SCOTCH_LIBS; do
+  echo int/lib/lib${lib}.so /usr/lib/${DEB_HOST_MULTIARCH}
+  echo int32/lib/lib${lib}.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32
+  echo int64/lib/lib${lib}.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64
+  echo long/lib/lib${lib}.so /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long
+done
+
+for lib in $SCOTCH_STATIC_LIBS; do
+  echo int/lib/lib${lib}.a /usr/lib/${DEB_HOST_MULTIARCH}
+  echo int32/lib/lib${lib}.a /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int32
+  echo int64/lib/lib${lib}.a /usr/lib/${DEB_HOST_MULTIARCH}/scotch-int64
+  echo long/lib/lib${lib}.a /usr/lib/${DEB_HOST_MULTIARCH}/scotch-long
+done
+
+echo int/include/esmumps.h    /usr/include/scotch
+echo int/include/scotch.h    /usr/include/scotch
+echo int/include/scotchf.h    /usr/include/scotch
+
+echo int32/include/esmumps.h    /usr/include/scotch-int32
+echo int32/include/scotch.h    /usr/include/scotch-int32
+echo int32/include/scotchf.h    /usr/include/scotch-int32
+
+echo int64/include/esmumps.h    /usr/include/scotch-int64
+echo int64/include/scotch.h    /usr/include/scotch-int64
+echo int64/include/scotchf.h    /usr/include/scotch-int64
+
+echo long/include/esmumps.h    /usr/include/scotch-long
+echo long/include/scotch.h    /usr/include/scotch-long
+echo long/include/scotchf.h    /usr/include/scotch-long

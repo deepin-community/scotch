@@ -1,0 +1,11 @@
+scotch for Debian
+-----------------
+
+Scotch provides a metis and parmetis interface which would allow one to compile
+programs and libraries requiring metis whitout having to install parmetis
+(which is a non-free software)
+
+From release 6.1.1, the default Metis compatibility built into libscotchmetis.so
+has been configured to Metis v5 (build flag -DSCOTCH_METIS_VERSION=5).
+
+ -- Drew Parsons <dparsons.org>, Fri, 25 Jun 2021 16:10:52 +0200

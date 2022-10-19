@@ -1,0 +1,591 @@
+scotch (6.1.1-2) unstable; urgency=medium
+
+  * Team upload.
+  * Standards-Version: 4.6.0
+  * builds with Metis v5 compatibility. Closes: Bug#989783.
+
+ -- Drew Parsons <dparsons@debian.org>  Sat, 16 Oct 2021 12:30:35 +0200
+
+scotch (6.1.1-1exp1) experimental; urgency=medium
+
+  * Team upload.
+  * new upstream release
+    - improves Metis compatibility (METIS_PartMeshDual).
+      See Bug#506033.
+    - adds Metis fortran support (metisf.h)
+  * build libscotchmetis.so with Metis v5 compatibility
+    (-DSCOTCH_METIS_VERSION=5) to match libmetis-dev more closely
+    - debian patch default_metis_v5.patch sets SCOTCH_METIS_VERSION=5
+      in metis.h and injects _m5 into soname for libscotchmetis.so
+      since default Metis functions are now configured to v5
+  * update debian/patches/build-shared-library-soname.patch to link
+    libscotchmetis.so to libscotcherr.so, since metis_graph_dual.c
+    and metis_graph_part_dual.c use SCOTCH_errorPrint.
+    Also link with -lm for the round function.
+    Likewise link libptscotchmetis.so to libptscotcherr.so.
+  * Build-Depends: gfortran | fortran-compiler
+    - drop Build-Depends: quilt (patches handled by debhelper)
+  * update debian/watch to track gitlab.inria.fr/scotch
+
+ -- Drew Parsons <dparsons@debian.org>  Mon, 28 Jun 2021 00:19:12 +0200
+
+scotch (6.1.0-2) unstable; urgency=medium
+
+  * Team upload.
+  * upload to unstable
+
+ -- Drew Parsons <dparsons@debian.org>  Wed, 28 Oct 2020 22:30:19 +0800
+
+scotch (6.1.0-1exp2) experimental; urgency=medium
+
+  * Team upload.
+  * simplify override_dh_clean rule. Let dh handle the debian patches.
+
+ -- Drew Parsons <dparsons@debian.org>  Thu, 15 Oct 2020 02:08:48 +0800
+
+scotch (6.1.0-1exp1) experimental; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+    - deprecates debian patches fix_manpages.patch and
+      man_gpart_gman.patch
+    - ABI bump: provides libscotch-6.1.so
+      (asserting stable ABI in VERSION.RELEASE i.e. as 6.1)
+  * rename gpart as scotch_gpart
+  * update debian/tests/check.Makefile.patch to use gpart as
+    scotch_gpart
+  * rename debian patch build-fixes.patch as
+    build-shared-library-soname.patch
+  * build with dpkg-buildflags CFLAGS and LDFLAGS
+    (to apply standard hardening flags, etc)
+  * simplify debian/rules with dh (no -indep targets)
+  * link missing manpages or generate using help2man
+
+ -- Drew Parsons <dparsons@debian.org>  Wed, 07 Oct 2020 12:58:29 +0800
+
+scotch (6.0.10-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+    - refresh debian patch build-fixes.patch
+  * refresh check.Makefile.patch in debian/tests
+  * Standards-Version: 4.5.0
+  * debhelper compatibility level 13
+  * enquote "Adam C. Powell, IV" in debian changelog
+
+ -- Drew Parsons <dparsons@debian.org>  Thu, 10 Sep 2020 02:12:28 +0800
+
+scotch (6.0.9-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+    - fixes bump_b1.grf tests. Closes: #932777.
+      Drop debian patch skip_failing_tests.patch.
+  * skip build-time tests if nocheck is set in DEB_BUILD_OPTIONS
+  * drop VERSION,RELEASE,PATCHLEVEL from debian Makefile.inc files
+    (VERSION is defined in src/Makefile)
+    - update debian patch build-fixes.patch to build metis and
+      esmumps component libraries with soname VERSION. Closes: #940176.
+  * drop -I/usr/include/mpi from CFLAGS_COMMON in debian/rules
+    (defunct non-multiarch path, and MPI path is now provided by mpicc)
+  * ignore missing OpenFabrics transports in debian/tests
+    (set MCA btl_base_warn_component_unused to 0)
+  * Standards-Version: 4.4.1
+
+ -- Drew Parsons <dparsons@debian.org>  Sun, 10 Nov 2019 23:57:57 +0900
+
+scotch (6.0.7-3) unstable; urgency=medium
+
+  * Team upload.
+  * remove Multi-Arch: same for lib{pt}scotch-dev. Dimensions in
+    header files are different in some arches (e.g. 32bit vs 64bit).
+  * add test_scotch_graph_order data/bump_b1.grf to
+    skip_failing_tests.patch (segfaults under gcc-9). Closes: #925823.
+  * link -lm after source files in debian/tests/check.Makefile.patch
+
+ -- Drew Parsons <dparsons@debian.org>  Fri, 16 Aug 2019 03:14:12 +0800
+
+scotch (6.0.7-2) unstable; urgency=medium
+
+  * Team upload.
+  * add debian patch skip_failing_tests.patch to skip
+    test_libmetis bump_b1.grf (new in 6.0.7, fails on most arches)
+  * mark lib{pt}scotch-dev as Multi-Arch: same
+  * update debian test check.Makefile.patch for test_libmetis
+
+ -- Drew Parsons <dparsons@debian.org>  Thu, 25 Jul 2019 22:26:56 +0800
+
+scotch (6.0.7-1) experimental; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+  * Standards-Version: 4.4.0
+  * debhelper compatibility level 12
+  * mark library binary packages and *metis-dev as Multi-Arch: same
+
+ -- Drew Parsons <dparsons@debian.org>  Sun, 21 Jul 2019 15:52:11 +0800
+
+scotch (6.0.6-2) unstable; urgency=medium
+
+  * Team upload.
+  * use DEB_HOST_ARCH=m68k,powerpcspe and DEB_HOST_ARCH_OS=hurd to
+    identify arches on which test errors are ignored or skipped
+    - allow m68k to run tests but ignore errors (segfault is expected
+      in the qemu emulator used to build packages on the m68k buildd)
+  * update build-fixes.patch to ensure libptesmumps links to ptscotch
+    and includes pt in its soname. Closes: #909404.
+  * don't compress pdf docs
+
+ -- Drew Parsons <dparsons@debian.org>  Mon, 24 Sep 2018 05:26:55 +0800
+
+scotch (6.0.6-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version.
+    - Scotch and PT-Scotch documentation now available. Closes: #890278.
+  * activate support for bz2 and lzma compression
+  * update debian/watch to special strings (detects alphabetic versions)
+  * update -DSCOTCH_PTHREAD_AFFINITY_LINUX to -DCOMMON_PTHREAD_AFFINITY_LINUX
+  * update build-fixes.patch
+    - use lib$(ESMUMPSLIB) instead of libesmumps
+    - preserve symlinks (cp -a) when installing libscotchmetis
+  * debian/control: update Vcs tags to
+    https://salsa.debian.org/science-team/scotch
+  * add debian/tests (autopkgtest)
+  * Standards-Version: 4.2.1
+  * debhelper compatibility level 11
+
+ -- Drew Parsons <dparsons@debian.org>  Sat, 22 Sep 2018 15:19:03 +0800
+
+scotch (6.0.4.dfsg1-8) unstable; urgency=medium
+
+  * Team upload.
+  * Don't halt on test errors for powerpcspe
+    (may segfault on INTSIZE64, but the default INT is still useful)
+  * Skip tests altogether on hurd, m68k (their timeout and qemu test
+    failures can't simply be ignored).
+  * Create a fill-in man page scotch_binaries.1 to cover sundry
+    binaries scotch_esmumps, scotch_gbase, acpl, amk_grf, mcv for which
+    a man page is not available. Closes: #883824.
+  * Install with executable [pt]scotch.install to distinguish scotch
+    from ptscotch binaries at package build time.
+  * debian patch fix_manpages.patch fixes errors using quotes '' at
+    the beginning of lines in gout and dgscat man pages.
+  * Use automatic symbol packages (-dbgsym) instead of old -dbg packages
+  * Standards-Version: 4.1.2
+
+ -- Drew Parsons <dparsons@debian.org>  Wed, 20 Dec 2017 14:29:43 +0800
+
+scotch (6.0.4.dfsg1-7) unstable; urgency=medium
+
+  * Team upload.
+  * Don't halt on test errors on hurd, m68k:
+    - hurd times out on buildd during build-time checks
+    - m68k segfaults inside the qemu emulator used for builds
+
+ -- Drew Parsons <dparsons@debian.org>  Mon, 27 Nov 2017 10:45:25 +0800
+
+scotch (6.0.4.dfsg1-6) unstable; urgency=medium
+
+  * Team upload.
+  * debian/rules: provide path to built libs (LD_LIBRARY_PATH) when
+    running build-time checks.
+    - should enable tests to run successfully, so reinstate
+      halt-on-error for checks
+  * -DSCOTCH_PTHREAD_AFFINITY_LINUX (pthread_setaffinity_np) is not
+    supported by hurd (kfreebsd does support it)
+
+ -- Drew Parsons <dparsons@debian.org>  Sun, 26 Nov 2017 22:59:12 +0800
+
+scotch (6.0.4.dfsg1-5) unstable; urgency=medium
+
+  * Team upload.
+  * debian/rules: apply "set -e" at the build step to halt on build
+    error. Closes: #865671.
+    - treat tests (make check) as information-only, don't halt on
+      check failure
+  * improve thread handling with -DSCOTCH_PTHREAD_NUMBER=2 and
+    -DSCOTCH_PTHREAD_AFFINITY_LINUX (see INSTALL.txt)
+
+ -- Drew Parsons <dparsons@debian.org>  Sun, 26 Nov 2017 10:29:40 +0800
+
+scotch (6.0.4.dfsg1-4) unstable; urgency=medium
+
+  * Team upload.
+  * Rename correct-ptscotch-header.patch as include_headers.patch:
+    include scotch.h in [par]metis.h to define SCOTCH_Num.
+  * Include stdio.h in scotch.h (in C).
+
+ -- Drew Parsons <dparsons@debian.org>  Fri, 17 Nov 2017 01:01:42 +0800
+
+scotch (6.0.4.dfsg1-3) unstable; urgency=medium
+
+  * Team upload.
+  * Reorganise debian's Makefile_*.inc makefile fragments to use a
+    common CFLAGS and LDFLAGS (defined in debian/rules).
+  * add HAVE_SYS_TIME_H to hurd flags to ensure timeval is defined.
+    Closes: #881200.
+
+ -- Drew Parsons <dparsons@debian.org>  Fri, 10 Nov 2017 13:25:40 +0800
+
+scotch (6.0.4.dfsg1-2) unstable; urgency=medium
+
+  * Team upload.
+  * Upload scotch 6 to unstable.
+
+ -- Drew Parsons <dparsons@debian.org>  Wed, 08 Nov 2017 15:41:18 +0800
+
+scotch (6.0.4.dfsg1-1exp1) experimental; urgency=medium
+
+  * Team upload.
+
+  [ Nico Schlömer ]
+  * New upstream release. Closes: #731965.
+
+  [ Christophe Trophime ]
+  * debian patch correct-ptscotch-header.patch: include mpi.h.
+  * debian/Makefile*: fix patchlevel version
+
+  [ Drew Parsons ]
+  * Standards-Version: 4.1.1
+  * debhelper compatibility level 10
+  * debian/control: Priority: optional not extra
+  * shared directories use multiarch /usr/lib/${DEB_HOST_MULTIARCH}
+  * scotch: install scotch_gpart alongside scotch_gmap. Closes: #728995.
+
+ -- Drew Parsons <dparsons@debian.org>  Sun, 29 Oct 2017 03:11:16 +0800
+
+scotch (6.0.0.dfsg-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * New upstream release
+  * debian/control:
+     - Standards-Version: 3.9.4 (no changes needed)
+
+ -- Christophe Trophime <christophe.trophime@lncmi.cnrs.fr>  Thu, 05 Sep 2013 08:36:12 +0200
+
+scotch (5.1.12b.dfsg-3) unstable; urgency=low
+
+  * debian/control
+      remove obsolete DM-Upload-Allowed 
+  * debian/rules
+      modify install target: add cstdio include to [pt]scotch.h 
+      Fix broken symlinks (Closes: #715107)
+      Fix [par]metis-compatibility symlinks (Closes: #715112)
+  * update build-fixes.patch (fix ld warnings)
+  
+ -- Christophe Trophime <christophe.trophime@lncmi.cnrs.fr>  Fri, 19 Aug 2013 14:15:10 +0100
+
+scotch (5.1.12b.dfsg-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Drop DMUA.
+  * Remove Christophe Prud'homme from Uploaders.  (Closes: #835019)
+  * libptscotch-5.1: Fix library installation path.  (Closes: #715107)
+  * libscotchmetis-dev: Fix libmetis.* -> libscotchmetis.* links.
+  * libscotchparmetis-dev: Fix libparmetis.* -> libptscotchparmetis.* links.
+    (Closes: #715112, #816109)
+  * Make package build reproducibly, thanks to Dhole.  (Closes: #787997)
+
+ -- Andreas Beckmann <anbe@debian.org>  Fri, 17 Mar 2017 23:23:06 +0100
+
+scotch (5.1.12b.dfsg-2) unstable; urgency=low
+
+  [ Christophe Trophime ]
+  * Rename gmap to avoid clash with "gmap package" (Closes: #680484)
+  * Update install for gmap name change
+  * Correct scotch_gmpap names in [pt]scotch.install Try to supress
+    lintian warnings
+  * Fix install for scotch_gmap.1 manpage
+  * Fix change from gmap to scotch_gmap
+
+  [ Andreas Tille ]
+  * debian/control:
+     - Add myself to uploaders
+     - Standards-Version: 3.9.3 (no changes needed)
+  * debian/Makefile*.inc: Enable propagation of hardening flags
+  * debian/patches/format-security.patch: Fix format security issue
+
+ -- Andreas Tille <tille@debian.org>  Tue, 17 Jul 2012 10:12:24 +0200
+
+scotch (5.1.12b.dfsg-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix "FTBFS: cp: cannot stat `debian/tmp/int/bin/scotch_esmumps': No
+    such file or directory":
+    debian/rules: let build-arch-stamp depend on patch-stamp.
+    (Closes: #666295)
+
+ -- gregor herrmann <gregoa@debian.org>  Sun, 15 Apr 2012 14:33:10 +0200
+
+scotch (5.1.12b.dfsg-1) unstable; urgency=low
+
+  * New upstream (closes: #652900).
+  * Rebuild with new mpi-defaults (closes: #652311).
+  * Forward-ported build-fixes.patch (just shifted one hunk two lines).
+  * New build-arch and build-indep targets in rules.
+  * Updated VCS URLs.
+  * Bumped Standards-Version.
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Wed, 21 Dec 2011 13:40:52 -0500
+
+scotch (5.1.11.dfsg-7) unstable; urgency=low
+
+  [ Adam C. Powell, IV ]
+  * Revert to building shared and static libs from the same objects, as in -4.
+  * Link libraries properly (closes: #621037).
+
+  [ Johannes Ring ]
+  * Make ptscotch libs work.
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Wed, 06 Apr 2011 11:10:22 -0400
+
+scotch (5.1.11.dfsg-6) unstable; urgency=low
+
+  * Added mpi-default-dev to lib[pt]scotch-dev Depends.
+  * Disable parallel builds (closes: #620973).
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Tue, 05 Apr 2011 10:36:26 -0400
+
+scotch (5.1.11.dfsg-5) unstable; urgency=low
+
+  [Johannes Ring]
+  * Change -lscotch to $(LIBSCOTCHDEPS) to facilitate linking with libscotch
+    and libptscotch together
+  * Update Makefile.inc LEX and YACC commands based on
+    src/Make.inc/Makefile.inc.i686_pc_linux2 (see -DSCOTCH_RENAME_PARSER below)
+  * Change CCS and CCD from gcc -I/usr/include/mpi etc. to mpicc
+
+  [Pierre Saramito]
+  * Add -DSCOTCH_RENAME_PARSER to CFLAGS, this and Johannes' LEX and YACC
+    extensions fix the FTBFS (closes: #619935)
+  * Separate shared and static builds; this and Johannes' Scotch lib change
+    allow linking with libscotch and libptscotch together (closes: #612621)
+
+  [ Adam C. Powell, IV ]
+  * Descriptive heading to build-fixes.patch
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Mon, 04 Apr 2011 09:37:47 -0400
+
+scotch (5.1.11.dfsg-4) unstable; urgency=low
+
+  [Christophe Trophime]
+  * Add support for multiple Integer size versions (closes: #619840)
+  * debian/rules : rewrite to support multiple integer size versions and remove
+    cdbs
+
+  [Johannes Ring]
+  * Remove -DSCOTCH_PTHREAD option from debian/Makefile*.inc (closes: #612621)
+  * Removed no-extra-clean.patch (closes: #612606).
+
+  [ Adam C. Powell, IV ]
+  * Fixed a couple of issues in debian/rules clean target.
+  * Reinstated debugging package builds after cdbs removal.
+
+  [ Angel Abad ]
+  * Fix FTBFS with binutils-gold (closes: #612170)
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Sun, 27 Mar 2011 14:55:43 -0400
+
+scotch (5.1.11.dfsg-3) unstable; urgency=low
+
+  * Removed gbase conflict and renamed gbase to scotch_gbase (closes: #608655).
+  * Eliminated extra clean target deps to avoid unnecessary recompilation.
+  * Added LD_LIBRARY_PATH to link binaries with linked libs (closes: #609208).
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Wed, 12 Jan 2011 09:46:31 -0500
+
+scotch (5.1.11.dfsg-2) unstable; urgency=low
+
+  [ Matthias Klose ]
+  * Fix FTBFS by placing objects before libs in link command (closes: #608430).
+
+  [ Adam C. Powell, IV ]
+  * Moved Matthias' patch content into debian/patches/shared-libs.patch, and
+    extended it to include libscotchmetis and esmumps dirs.
+  * Add inter-library dependencies to force build order (closes: #608372).
+  * Removed libscotch objects from libptscotch.
+  * Fixed install and clean targets, which somehow fixed libscotchmetis-5.1.so
+    linkages (closes: #609066).
+  * Made scotch conflict with gbase due to overlapping binary and manpage names
+    (closes: #608655).
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Thu, 06 Jan 2011 21:25:33 -0500
+
+scotch (5.1.11.dfsg-1) unstable; urgency=low
+
+  [Christophe Trophime]
+  * New upstream release
+  * Forward-ported patches to version 5.1.10b.
+  * Install scotch headers properly.
+  * Fix chrpath commands in debian/rules.
+  * Fix (pt)scotch library install paths.
+  * Fix lintian errors and warnings.
+
+  [Adam C. Powell, IV]
+  * Forward-ported patches to version 5.1.11.
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Wed, 29 Dec 2010 13:07:19 -0500
+
+scotch (5.1.8a.dfsg-2) unstable; urgency=low
+
+  * Added -I to CCS to fix building with LAM-MPI (closes: #581381).
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Wed, 19 May 2010 14:21:57 -0400
+
+scotch (5.1.8a.dfsg-1) unstable; urgency=low
+
+  * New upstream.
+  * Changed control file to conform to Debian Science Policy Manual.
+  * Added -I to CFLAGS to fix building with LAM-MPI (closes: #581381).
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Wed, 12 May 2010 11:33:16 -0400
+
+scotch (5.1.7.dfsg-5) unstable; urgency=low
+
+  * Fixed debugging packages for libraries, and added debugging packages for
+    executables in scotch and ptscotch.
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Tue, 06 Apr 2010 07:34:40 -0400
+
+scotch (5.1.7.dfsg-4) unstable; urgency=low
+
+  [Christophe Trophime]
+  * Fix lintian warning
+  * Add remove esmumps .so and .a in clean target in debian/rules
+  * Add remove [p]scotch-esmumps in clean target in debian/rules
+  * Add missing ptscotch headers in libptscotch-dev (closes: #576280).
+
+  [Adam C. Powell, IV]
+  * Added -I/usr/include/lam to Makefile.inc (closes: #574724).
+  
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Sun, 04 Apr 2010 22:40:02 -0400
+
+scotch (5.1.7.dfsg-3) unstable; urgency=low
+
+  * Uses chrpath to remove rpath from ptscotch and libptscotch5.1 binaries.
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Mon, 15 Mar 2010 16:25:41 -0400
+
+scotch (5.1.7.dfsg-2) unstable; urgency=low
+
+  * libscotchmetis-dev conflicts with libparmetis-dev (closes: #568841).
+  * Made package descriptions more descriptive (closes: #568819, #572892).
+  * Added MPI include to library.h included in scotch.h (closes: #570097).
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Mon, 15 Mar 2010 15:10:03 -0400
+
+scotch (5.1.7.dfsg-1) unstable; urgency=low
+
+  [Christophe Trophime]
+  * New upstream release.
+  * Added PT-scotch support (Closes: #561384).
+
+  [Adam C. Powell, IV]
+  * Removed headers from libptscotch-dev, made it depend on libscotch-dev.
+  * Using version with esmumps subdirectory (closes: #531048).
+  * Changed source format to 3.0 (quilt).
+  * Bumped Standards-Version.
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Tue, 02 Feb 2010 20:03:23 -0500
+
+scotch (5.1.6.dfsg-3) unstable; urgency=low
+
+  [Christophe Prud'homme]
+  * Bug fix: "FTBFS with binutils-gold", thanks to Peter Fritzsche
+    (Closes: #556338).
+  * Bug fix: "Should be arch: all", thanks to Adam C Powell IV (Closes:
+    #496701).
+
+ -- Christophe Prud'homme <prudhomm@debian.org>  Mon, 14 Dec 2009 07:31:38 +0100
+
+scotch (5.1.6.dfsg-2) unstable; urgency=low
+
+  * Bug fix: "Should be arch: all", thanks to Adam C Powell IV (Closes:
+    #496701).
+
+ -- Christophe Prud'homme <prudhomm@debian.org>  Tue, 26 May 2009 08:32:26 +0200
+
+scotch (5.1.6.dfsg-1) unstable; urgency=low
+
+  * New upstream release
+   + This is mainly a bugfix revision. A bug in the graph folding code,
+    which was almost silent in previous releases, was not fixed in release
+    5.1.5 but instead was made more salient. It is now fixed for good.
+   + A new feature has beed added to the API, which allows users to
+    perform asynchronous halo exchange operations, whenever available.
+
+ -- Christophe Prud'homme <prudhomm@debian.org>  Thu, 21 May 2009 22:36:28 +0200
+
+scotch (5.1.4.dfsg-2) unstable; urgency=low
+
+  [Christophe Prud'homme]
+  * debian/genmanpage.sh: fixed project home page in man pages and
+    regenerated the man pages.
+
+  [Adam C. Powell, IV]
+  * Updated version number in patches/shared-libs.patch and shared lib package
+    .install file name (closes: #527617).
+  * Fixed my name in control to match my key (generates an erroneous lintian
+    warning, see bug 485705).
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Fri, 08 May 2009 10:37:25 -0400
+
+scotch (5.1.4.dfsg-1) unstable; urgency=low
+
+  [Christophe Prud'homme]
+  * New upstream release
+  * debian/rules: rename rule orig-tarball by standard rule
+    get-orig-source
+  * debian/rules: automatically find out about upstream
+  * debian/control: update Standards-Version to 3.8.1 (no change)
+  * debian/control: added -dbg
+  * debian/control: now generate libscotch-5.1 instead of libscotch-5.1.x,
+    don't use the minor version x, there is no interface change
+  * scotch: provide script to generate 'dummy' manpages for executables
+  * fixed lintian warnings and errors
+
+ -- Christophe Prud'homme <prudhomm@debian.org>  Thu, 16 Apr 2009 10:58:47 +0200
+
+scotch (5.0.6.dfsg-3) unstable; urgency=low
+
+  * Patched metis.h to include typedef idxtype (closes: #496693).
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Tue, 26 Aug 2008 15:26:16 -0400
+
+scotch (5.0.6.dfsg-2) unstable; urgency=low
+
+  * First upload in a long time (closes: #470419, #470420).
+  * Added shared libraries (closes: #470422).
+  * Added quilt (for shlib patch) and zlib1g-dev Build-Deps.
+
+ -- "Adam C. Powell, IV" <hazelsct@debian.org>  Mon, 21 Jul 2008 12:16:35 -0400
+
+scotch (5.0.6.dfsg-1) unstable; urgency=low
+
+  * New upstream release
+  * Update Standards-Version to 3.8.0, no changes
+
+ -- Christophe Prud'homme <prudhomm@debian.org>  Tue, 01 Jul 2008 08:08:45 +0200
+
+scotch (5.0.5.dfsg-1) unstable; urgency=low
+
+  [ Christophe Prud'homme ]
+  * New upstream release
+  * Bug fix: "scotch: new upstream available", thanks to Adam C Powell IV
+    (Closes: #470420).
+  * Bug fix: "scotch: lintian cleanups", thanks to Adam C Powell IV
+    (Closes: #470419).
+
+  [ Daniel Leidert ]
+  * debian/control: Added Vcs and Homepage fields.
+  * debian/watch: Fixed.
+
+ -- Christophe Prud'homme <prudhomm@debian.org>  Tue, 11 Mar 2008 06:52:06 +0100
+
+scotch (5.0.1.dfsg-1) unstable; urgency=low
+
+  * Initial Debian package (Closes: #462487).
+
+ -- Christophe Prud'homme <prudhomm@debian.org>  Fri, 25 Jan 2008 09:13:53 +0100
+

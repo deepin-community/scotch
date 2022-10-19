@@ -1,0 +1,157 @@
+Source: scotch
+Section: math
+Priority: optional
+Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
+Uploaders: "Adam C. Powell, IV" <hazelsct@debian.org>,
+ Andreas Tille <tille@debian.org>
+Build-Depends: debhelper-compat (= 13),
+    gfortran | fortran-compiler,
+    bison, flex,
+    zlib1g-dev,
+    libbz2-dev,
+    liblzma-dev,
+    chrpath,
+    mpi-default-dev, mpi-default-bin
+Standards-Version: 4.6.0
+Vcs-Git: https://salsa.debian.org/science-team/scotch.git
+Vcs-Browser: https://salsa.debian.org/science-team/scotch
+Homepage: http://www.labri.fr/perso/pelegrin/scotch/
+
+Package: scotch
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: programs and libraries for graph, mesh and hypergraph partitioning
+ Its purpose is to apply graph theory, with a divide and conquer
+ approach, to scientific computing problems such as graph and mesh
+ partitioning, static mapping, and sparse matrix ordering, in
+ application domains ranging from structural mechanics to operating
+ systems or bio-chemistry.
+ .
+ The SCOTCH distribution is a set of programs and libraries which
+ implement the static mapping and sparse matrix reordering algorithms
+ developed within the SCOTCH project.
+ .
+ SCOTCH has many interesting features:
+ .
+ o Its capabilities can be used through a set of stand-alone programs
+ as well as through the libSCOTCH library, which offers both C and
+ Fortran interfaces.
+ .
+ o It provides algorithms to partition graph structures, as well as
+ mesh structures defined as node-element bipartite graphs and which
+ can also represent hypergraphs.
+ .
+ o It can map any weighted source graph onto any weighted target
+ graph. The source and target graphs may have any topology, and their
+ vertices and edges may be weighted. Moreover, both source and target
+ graphs may be disconnected. This feature allows for the mapping of
+ programs onto disconnected subparts of a parallel architecture made
+ up of heterogeneous processors and communication links.
+ .
+ o It computes amalgamated block orderings of sparse matrices, for
+ efficient solving using BLAS routines.
+ .
+ o Its running time is linear in the number of edges of the source
+ graph, and logarithmic in the number of vertices of the target graph
+ for mapping computations.
+ .
+ o It can handle indifferently graph and mesh data structures created
+ within C or Fortran programs, with array indices starting from 0 or
+ 1.
+ .
+ o It offers extended support for adaptive graphs and meshes through
+ the handling of disjoint edge arrays.
+ .
+ o It is dynamically parametrizable thanks to strategy strings that
+ are interpreted at run-time.
+ .
+ o It uses system memory efficiently, to process large graphs and
+ meshes without incurring out-of-memory faults;
+ .
+ o It is highly modular and documented. Since it has been released
+ under the CeCILL-C free/libre software license, it can be used as a
+ testbed for the easy and quick development and testing of new
+ partitioning and ordering methods.
+ .
+ o It can be easily interfaced to other programs. The programs
+ comprising the SCOTCH project have been designed to run in
+ command-line mode without any interactive prompting, so that they can
+ be called easily from other programs by means of system() or popen()
+ calls, or piped together on a single command line. Moreover, vertex
+ labeling capabilities allow for easy renumbering of vertices.
+ .
+ o It provides many tools to build, check, and display graphs, meshes
+ and matrix patterns.
+ .
+ o It is written in C and uses the POSIX interface, which makes it
+ highly portable. PT-SCOTCH uses the MPI interface, and optionally the
+ POSIX threads.
+
+Package: ptscotch
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: MPI programs and libraries for graph, mesh and hypergraph partitioning
+ PT-SCOTCH is the MPI version of scotch, which is a set of programs and
+ libraries which implement the static mapping and sparse matrix reordering
+ algorithms developed within the SCOTCH project.
+
+Package: libscotch-dev
+Section: libdevel
+Architecture: any
+Depends: libscotch-6.1 (= ${binary:Version}), mpi-default-dev, zlib1g-dev, ${shlibs:Depends}, ${misc:Depends}
+Description: programs and libraries for graph, mesh and hypergraph partitioning
+ Headers and libraries package for scotch, which is a set of programs and
+ libraries which implement the static mapping and sparse matrix reordering
+ algorithms developed within the SCOTCH project.
+
+Package: libptscotch-dev
+Section: libdevel
+Architecture: any
+Depends: libptscotch-6.1 (= ${binary:Version}), libscotch-dev (= ${binary:Version}), mpi-default-dev, zlib1g-dev, ${misc:Depends}
+Description: MPI programs and libraries for graph, mesh and hypergraph partitioning
+ Headers and libraries package for PT-SCOTCH, the MPI version of scotch, which
+ is a set of programs and libraries which implement the static mapping and
+ sparse matrix reordering algorithms developed within the SCOTCH project.
+
+Package: libscotchmetis-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libscotch-dev (= ${binary:Version}), ${misc:Depends}
+Conflicts: libmetis-dev, libparmetis-dev
+Replaces: libmetis-dev
+Description: programs and libraries for graph, mesh and hypergraph partitioning
+ Scotch/Metis compatility interface, providing a free implementation of the
+ Metis system for graph partitioning and sparse matrix reordering.
+
+Package: libscotchparmetis-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libptscotch-dev (= ${binary:Version}), ${misc:Depends}
+Conflicts: libparmetis-dev
+Replaces: libparmetis-dev
+Description: programs and libraries for graph, mesh and hypergraph partitioning
+ Scotch/ParMetis compatility interface, providing a free implementation of the
+ ParMetis system for parallel graph partitioning and sparse matrix reordering.
+
+Package: libscotch-6.1
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: programs and libraries for graph, mesh and hypergraph partitioning
+ Shared libraries package for scotch, which is a set of programs and
+ libraries which implement the static mapping and sparse matrix reordering
+ algorithms developed within the SCOTCH project.
+
+Package: libptscotch-6.1
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: MPI programs and libraries for graph, mesh and hypergraph partitioning
+ Shared libraries package for PT-SCOTCH, the MPI version of scotch, which
+ is a set of programs and libraries which implement the static mapping and
+ sparse matrix reordering algorithms developed within the SCOTCH project.
+

@@ -1,0 +1,20 @@
+#! /bin/sh
+
+echo int/include/parmetis.h /usr/include/parmetis
+echo int/lib/libparmetis.so /usr/lib/${DEB_HOST_MULTIARCH}
+echo int/lib/libparmetis.a /usr/lib/${DEB_HOST_MULTIARCH}
+
+echo int32/include/parmetis.h /usr/include/parmetis-int32
+#echo int32/lib/libparmetis.so /usr/lib/${DEB_HOST_MULTIARCH}/parmetis-int32
+#echo int32/lib/libparmetis.a /usr/lib/${DEB_HOST_MULTIARCH}/parmetis-int32
+
+echo int64/include/parmetis.h /usr/include/parmetis-int64
+#echo int64/lib/libparmetis.so /usr/lib/${DEB_HOST_MULTIARCH}/parmetis-int64
+#echo int64/lib/libparmetis.a /usr/lib/${DEB_HOST_MULTIARCH}/parmetis-int64
+
+echo long/include/parmetis.h /usr/include/parmetis-long
+#echo long/lib/libparmetis.so /usr/lib/${DEB_HOST_MULTIARCH}/parmetis-long
+#echo long/lib/libparmetis.a /usr/lib/${DEB_HOST_MULTIARCH}/parmetis-long
+
+echo doc/CeCILL-C_V1-en.txt /usr/share/doc/libscotchparmetis-dev
+echo doc/CeCILL-C_V1-fr.txt /usr/share/doc/libscotchparmetis-dev
